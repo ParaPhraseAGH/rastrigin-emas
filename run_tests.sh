@@ -35,8 +35,8 @@ rtime=2000
 cores="4"
 # run_repeat=3
 run_repeat=1
-skel_workers="4 8"
-models="skel_main sequential hybrid concurrent"
+skel_workers=4
+models="mas_sequential mas_skel mas_hybrid mas_concurrent"
 operators="rastrigin_bin_ops labs_ops"
 # models="hybrid"
 
