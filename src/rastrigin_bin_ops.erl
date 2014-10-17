@@ -4,7 +4,7 @@
 
 -export ([evaluation/2, mutation/2, recombination/3, solution/1]).
 
--include_lib("erlang_emas/apps/emas/include/emas.hrl").
+-include_lib("emas/include/emas.hrl").
 
 
 %% @doc Generates a random solution, as a vector of numbers in the range [-50, 50].
