@@ -15,7 +15,7 @@ run () {
                         output_file=$output_root/$ops/$model/$core/w$workers/$logfile
                         echo $output_file
                         erl +S 4:$core -pa ebin -pa deps/*/ebin \
-                            -eval "emas:start($model,$rtime,[{skel_workers,$workers},{genetic_ops,rastrigin_bin_ops},{problem_size,30}])." \
+                            -eval "emas:start($model,$rtime,[{skel_workers,$workers},{genetic_ops,$operators},{problem_size,30}])." \
                             -run init stop -noshell
                         #> $output_file
                     done
@@ -37,8 +37,7 @@ cores="4"
 run_repeat=1
 skel_workers=4
 models="mas_sequential mas_skel mas_hybrid mas_concurrent"
-operators="rastrigin_bin_ops labs_ops"
-# models="hybrid"
+operators="rastrigin_bin_ops"
 
 output_root=$output_dir/tests
 
