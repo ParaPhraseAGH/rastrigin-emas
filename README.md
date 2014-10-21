@@ -15,7 +15,7 @@ To run the project on your machine you need:
 First you need to clone the repository:
 
     > git clone https://github.com/ParaPhraseAGH/rastrigin-emas.git
-    > cd erlang/
+    > cd rastrigin-emas/
 
 To build the project you should use the Makefile command:
 
@@ -27,7 +27,7 @@ Which will download and compile all necessary dependencies and the project itsel
 
 To start a VM where you can run the application, first make sure that you are in the main project's folder:
 
-    > cd emas/
+    > cd rastrigin-emas/
     
 Then you can run:
 
