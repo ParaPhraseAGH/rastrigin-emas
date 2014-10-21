@@ -1,5 +1,6 @@
 rastrigin-emas
 ==============
+[![Build Status](https://secure.travis-ci.org/ParaPhraseAGH/rastrigin-emas.svg?branch=master "Build Status")](http://travis-ci.org/ParaPhraseAGH/rastrigin-emas)
 
 This repository provides custom operators for the [EMAS algorithm](https://github.com/ParaPhraseAGH/erlang-emas), which use the [Rastrigin function](http://en.wikipedia.org/wiki/Rastrigin_function) as an optimisation example.
 
