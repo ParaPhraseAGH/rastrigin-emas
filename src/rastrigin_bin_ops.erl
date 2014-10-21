@@ -7,7 +7,7 @@
 -include_lib("emas/include/emas.hrl").
 
 -type sim_params() :: emas:sim_params().
-
+-type solution() :: emas:solution(binary()).
 
 %% @doc Generates a random solution, as a vector of numbers in the range [-50, 50].
 -spec solution(sim_params()) -> solution().
