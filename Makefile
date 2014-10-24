@@ -7,7 +7,7 @@ ERL=erl
 
 REBAR=./rebar
 
-.PHONY: all compile doc clean test dialyzer typer shell distclean pdf \
+.PHONY: all compile doc clean test deps dialyzer typer shell distclean pdf \
 	update-deps
 
 all: deps compile
@@ -29,6 +29,7 @@ doc:
 test: all
 	$(REBAR) ct
 	./run_tests.sh
+	make dialyzer
 
 $(DEPS_PLT):
 	@echo Building local plt at $(DEPS_PLT)
