@@ -3,22 +3,26 @@
 run () {
 
     for model in $models; do
-        for core in $cores; do
-            for workers in $skel_workers; do
-                for ops in $operators; do
-                    for run in `seq 1 $run_repeat`; do
-                        mkdir -p $output_root/$ops/$model/$core/w$workers
+        for run in `seq 1 $run_repeat`; do
+            for ops in $operators; do
+                for workers in $skel_workers; do
 
-                        echo "running $model in $rtime mlsecs with $workers skel workers on $core cores with $ops operators.."
-                        logfile="emas_$rtime"`date +"-%s"`".log"
+                    echo "running $model in $rtime mlsecs with $workers skel workers with $ops operators.."
 
-                        output_file=$output_root/$ops/$model/$core/w$workers/$logfile
-                        echo $output_file
-                        erl +S 4:$core -pa ebin -pa deps/*/ebin \
-                            -eval "emas:start($model,$rtime,[{skel_workers,$workers},{genetic_ops,$operators},{problem_size,30}])." \
-                            -run init stop -noshell
-                        #> $output_file
-                    done
+                    dir=$output_root/$ops/$model/$run/$workers
+                    mkdir -p $dir
+
+                    logfile="emas_$rtime"`date +"-%s"`".log"
+                    output_file=$dir/$logfile
+
+                    ./rastrigin --time $rtime \
+                                --model $model \
+                                --skel_workers $workers \
+                                --genetic_ops $ops \
+                                --problem_size 100 \
+                                --skel_split_size $split_size \
+                    #> $output_file
+                    
                 done
             done
         done
@@ -28,13 +32,9 @@ run () {
 
 
 output_dir="output"
-# rtime=120000
-rtime=2000
+rtime=5000
 
-# cores="1 2 4"
-cores="4"
-# run_repeat=3
-run_repeat=1
+run_repeat=3
 skel_workers=4
 models="mas_sequential mas_skel mas_hybrid mas_concurrent"
 operators="rastrigin_bin_ops"
