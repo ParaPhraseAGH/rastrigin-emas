@@ -21,7 +21,7 @@ update-deps:
 	$(REBAR) compile
 
 compile:
-	$(REBAR) skip_deps=true compile
+	$(REBAR) compile
 
 doc:
 	$(REBAR) skip_deps=true doc
