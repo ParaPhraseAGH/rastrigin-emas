@@ -2,7 +2,10 @@
 
 -behaviour(emas_genetic_ops).
 
--export ([evaluation/2, mutation/2, recombination/3, solution/1]).
+-export ([evaluation/2,
+          mutation/2,
+          recombination/3,
+          solution/1]).
 
 -include_lib("emas/include/emas.hrl").
 

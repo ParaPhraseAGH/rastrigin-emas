@@ -21,7 +21,8 @@ run () {
                                 --genetic_ops $ops \
                                 --problem_size 100 \
                                 --skel_split_size $split_size \
-                    #> $output_file
+                        || exit 1
+
                     
                 done
             done
@@ -37,7 +38,7 @@ rtime=5000
 run_repeat=3
 skel_workers=4
 models="mas_sequential mas_skel mas_hybrid mas_concurrent"
-operators="rastrigin_bin_ops"
+operators="rastrigin_bin_ops rastrigin_nif_ops"
 
 output_root=$output_dir/tests
 
