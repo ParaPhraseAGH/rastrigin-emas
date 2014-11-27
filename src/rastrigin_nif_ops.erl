@@ -56,3 +56,4 @@ mutation(_Solution, SP) ->
 -spec nif_mutation(solution(), float(), float()) -> solution().
 nif_mutation(_Solution, _Range, _Rate) ->
     erlang:nif_error(nif_not_loaded).
+
