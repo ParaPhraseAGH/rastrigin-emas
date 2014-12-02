@@ -48,6 +48,18 @@ static int nif_load(ErlNifEnv* env, void** priv, ERL_NIF_TERM load_info){
     return 0;
 }
 
+static int
+nif_upgrade(ErlNifEnv* env, void** priv_data, void** old_priv_data, ERL_NIF_TERM load_info){
+  return 0;
+}
+
+static void
+nif_unload(ErlNifEnv* env, void* priv_data){
+  return;
+}
+
+
+
 static ERL_NIF_TERM evaluate_solution(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]){
 
     // long diff;
@@ -233,5 +245,4 @@ static ErlNifFunc nif_funcs[] = {
     {"nif_recombination", 2, recombine_solutions}
 };
 
-ERL_NIF_INIT(rastrigin_nif_ops, nif_funcs, nif_load, NULL, NULL, NULL)
-
+ERL_NIF_INIT(rastrigin_nif_ops, nif_funcs, nif_load, NULL, nif_upgrade, nif_unload)
