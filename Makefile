@@ -10,7 +10,7 @@ REBAR=./rebar
 .PHONY: all compile doc clean test deps dialyzer typer shell distclean pdf \
 	update-deps
 
-all: deps compile
+all: deps
 
 deps:
 	$(REBAR) get-deps
