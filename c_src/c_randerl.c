@@ -10,6 +10,17 @@
 double uniform();
 void create_seeds();
 
+typedef struct {
+  int a;
+  int b;
+  int c;
+} Seed;
+
+
+#define PRIME1 30269
+#define PRIME2 30307
+#define PRIME3 30323
+
 
 static int
 nif_load(ErlNifEnv* env, void** priv, ERL_NIF_TERM load_info){
@@ -39,28 +50,38 @@ nif_seed_all(ErlNifEnv* env, int arc, const ERL_NIF_TERM argv[]){
   return enif_make_atom(env, "ok");
 }
 
+// TODO remove inicial seed
+Seed seed = {3172, 9814, 20125};
 
 static ERL_NIF_TERM
 nif_uniform(ErlNifEnv* env, int arc, const ERL_NIF_TERM argv[]){
-  double random = uniform();
-  return enif_make_double(env, random);
+  double Random = uniform(&seed);
+  return enif_make_double(env, Random);
 }
 
-
 double
-uniform () {
-  double big_random = rand();
-  return big_random / RAND_MAX;
+uniform (Seed *seed) {
+  seed->a = (seed->a * 171) % PRIME1;
+  seed->b = (seed->b * 172) % PRIME2;
+  seed->c = (seed->c * 170) % PRIME3;
+
+  double Random = (double)seed->a / PRIME1
+    + (double)seed->b / PRIME2
+    + (double)seed->c / PRIME3;
+
+  return Random - (int)Random;
 }
 
 void
 create_seeds() {
+  // notes 
   ErlNifSysInfo sys_info;
   enif_system_info(&sys_info, sizeof(sys_info));
   int scheduler_threads  = sys_info.scheduler_threads;
   int dirty_threads = sys_info.dirty_scheduler_support ? scheduler_threads : 0;
   int driver_threads = sys_info.async_threads;
   printf("Schedulers from C: %d + %d + %d  \n", scheduler_threads, dirty_threads, driver_threads);
+  // 
 
   return;
 }
