@@ -58,7 +58,10 @@ create_seeds() {
   ErlNifSysInfo sys_info;
   enif_system_info(&sys_info, sizeof(sys_info));
   int scheduler_threads  = sys_info.scheduler_threads;
-  printf("Schedulers from C: %d \n", scheduler_threads);
+  int dirty_threads = sys_info.dirty_scheduler_support ? scheduler_threads : 0;
+  int driver_threads = sys_info.async_threads;
+  printf("Schedulers from C: %d + %d + %d  \n", scheduler_threads, dirty_threads, driver_threads);
+
   return;
 }
 
