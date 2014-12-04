@@ -5,7 +5,8 @@
 %%% random.
 
 -export([seed/1,
-         uniform/0]).
+         uniform/0,
+         load_nif/0]).
 -on_load(load_nif/0).
 
 -define(LIBNAME, ?MODULE).
@@ -19,15 +20,6 @@ load_nif() ->
     SOName = filename:join([priv, ?LIBNAME]),
     ok = erlang:load_nif(SOName, []).
 
-
-%% TODO will be moved to load_nif function 
-init_c_seeds() ->
-    Schedulers = erlang:system_info(schedulers),
-    io:format("some some ~p ~n", [Schedulers]),
-    create_seeds(Schedulers).
-
-create_seeds(Schedulers) ->
-    erlang:nif_error(nif_not_loaded).
 
 
 %% @doc This update seed to same one on all schedulers.

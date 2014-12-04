@@ -8,11 +8,12 @@
 
 
 double uniform();
-
+void create_seeds();
 
 
 static int
 nif_load(ErlNifEnv* env, void** priv, ERL_NIF_TERM load_info){
+  create_seeds();
   return 0;
 }
 
@@ -50,6 +51,15 @@ double
 uniform () {
   double big_random = rand();
   return big_random / RAND_MAX;
+}
+
+void
+create_seeds() {
+  ErlNifSysInfo sys_info;
+  enif_system_info(&sys_info, sizeof(sys_info));
+  int scheduler_threads  = sys_info.scheduler_threads;
+  printf("Schedulers from C: %d \n", scheduler_threads);
+  return;
 }
 
 static ErlNifFunc nif_funcs[] = {
