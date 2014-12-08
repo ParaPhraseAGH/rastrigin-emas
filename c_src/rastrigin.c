@@ -1,6 +1,7 @@
 #include "rastrigin.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "c_randerl.h"
 
 /// utility functions
 
@@ -19,7 +20,7 @@ unsigned int get_seed(){
 }
 
 double randdouble(double lower, double upper){
-    return lower + (upper - lower) * (((double) rand()) / (double) RAND_MAX);
+  return lower + (upper - lower) * uniform();
 }
 
 void print_solution(Solution* sol, const char* desc){
