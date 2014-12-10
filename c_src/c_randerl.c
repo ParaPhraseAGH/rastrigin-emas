@@ -1,4 +1,3 @@
-#include "erl_nif.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "time.h"
@@ -10,29 +9,15 @@
 #define PRIME3 30323
 
 
-typedef struct {
-  uint a;
-  uint b;
-  uint c;
-} Seed;
-
-typedef struct {
-  Seed* seed;
-  ErlNifRWLock* lock;
-} SeedLock;
-
-typedef struct {
-  SeedLock * locks;
-  uint count;
-} SeedLocks;
-
-
-SeedLock* erl_get_seed();
+SeedLock* erl_get_seed(SeedLocks* all_seeds);
 void free_seed();
 double uniform_s(Seed* seed);
 uint threads_count();
 
-SeedLock global_seed_lock;
+Seed* new_seed(uint a, uint b, uint c);
+SeedLock* new_seed_lock();
+SeedLocks* new_seed_locks();
+
 Seed global_seed = {
   3172,
   9814,
@@ -41,18 +26,21 @@ Seed global_seed = {
 
 
 double
-uniform () {
-  SeedLock* lock = erl_get_seed();
+uniform (SeedLocks* all_seeds) {
+  SeedLock* lock = erl_get_seed(all_seeds);
   double random = uniform_s(lock->seed);
   free_seed(lock);
   return random;
 }
 
+
 SeedLock*
-erl_get_seed() {
-  enif_rwlock_rwlock(global_seed_lock.lock);
-  return &global_seed_lock;
+erl_get_seed(SeedLocks* all_seeds) {
+  SeedLock* seed_lock = all_seeds->locks[0];
+  enif_rwlock_rwlock(seed_lock->lock);
+  return seed_lock;
 }
+
 
 void free_seed(SeedLock* lock){
   enif_rwlock_rwunlock(lock->lock);
@@ -73,20 +61,46 @@ uniform_s (Seed *seed) {
   return Random - (int)Random;
 }
 
-void
+
+SeedLocks*
 create_seeds() {
-  // notes
-  threads_count();
-  //
 
-  SeedLock seed_lock =  {
-    .lock = enif_rwlock_create("nif_random_seed_lock"),
-    .seed = &global_seed,
-  };
+  return new_seed_locks();
+}
 
-  global_seed_lock = seed_lock;
 
-  return;
+Seed*
+new_seed(uint a, uint b, uint c) {
+  Seed* seed = (Seed*) enif_alloc(sizeof (Seed));
+  seed->a = a;
+  seed->b = b;
+  seed->c = c;
+  return seed;
+}
+
+
+SeedLock*
+new_seed_lock(Seed* seed) {
+  SeedLock* seed_lock = (SeedLock*) enif_alloc(sizeof (SeedLock));
+
+  seed_lock->seed = seed;
+  seed_lock->lock = enif_rwlock_create("nif_random_seed_lock");
+
+  return seed_lock;
+}
+
+SeedLocks*
+new_seed_locks() {
+  SeedLocks* all_locks = (SeedLocks*) enif_alloc(sizeof(SeedLocks));
+  uint lock_count = threads_count();
+  SeedLock** lock_array = (SeedLock**) enif_alloc(sizeof(SeedLock) * lock_count);
+
+  all_locks->count = lock_count;
+  all_locks->locks = lock_array;
+
+  all_locks->locks[0] = new_seed_lock(&global_seed);
+
+  return all_locks;
 }
 
 uint

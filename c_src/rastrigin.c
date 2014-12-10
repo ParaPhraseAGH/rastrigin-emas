@@ -3,24 +3,9 @@
 #include "stdlib.h"
 #include "c_randerl.h"
 
-/// utility functions
 
-unsigned int get_seed(){
-    FILE *urandom; 
-    unsigned int seed; 
-
-    urandom = fopen ("/dev/urandom", "r"); 
-    if (urandom == NULL) { 
-        fprintf (stderr, "Cannot open /dev/urandom!\n"); 
-        exit(1); 
-    } 
-    fread (&seed, sizeof(seed), 1, urandom); 
-    fclose(urandom);
-    return seed;
-}
-
-double randdouble(double lower, double upper){
-  return lower + (upper - lower) * uniform();
+double randdouble(double lower, double upper, SeedLocks* all_seeds){
+  return lower + (upper - lower) * uniform(all_seeds);
 }
 
 void print_solution(Solution* sol, const char* desc){
@@ -31,7 +16,6 @@ void print_solution(Solution* sol, const char* desc){
     }
     printf("\n");
 }
-///
 
 /// genetic operations
 
@@ -48,9 +32,9 @@ double fitness_rastrigin(Solution * sol){
 }
 
 
-double mutate_feature(double feature, double mutation_range){
+double mutate_feature(double feature, double mutation_range, SeedLocks* all_seeds){
     double range;
-    range = randdouble(0.0, mutation_range);
+    range = randdouble(0.0, mutation_range, all_seeds);
     if (range < 0.2){
         range = 5.0;
     } else if (range < 0.4){
@@ -58,21 +42,21 @@ double mutate_feature(double feature, double mutation_range){
     } else {
         range = 1.0;
     }
-    return feature + range * tan(M_PI * randdouble(-0.5, 0.5));
+    return feature + range * tan(M_PI * randdouble(-0.5, 0.5, all_seeds));
 }
 
-void mutate(Solution* prev, Solution* out, double range, double rate){
+void mutate(Solution* prev, Solution* out, double range, double rate, SeedLocks* all_seeds){
     int i;
     for (i=0;i<prev->len;i++){
-        if (randdouble(0.0,1.0) < rate){
-            out->genotype[i] = mutate_feature(prev->genotype[i], range);
+        if (randdouble(0.0,1.0, all_seeds) < rate){
+            out->genotype[i] = mutate_feature(prev->genotype[i], range, all_seeds);
         } else {
             out->genotype[i] = prev->genotype[i];
         }
     }
 }
 
-void recombine(Solution** parents, Solution** children){
+void recombine(Solution** parents, Solution** children, SeedLocks* all_seeds){
     int i;    
     // recombine parent solutions into 2 child solutions
     for (i=0;i<parents[0]->len;i++){
@@ -84,7 +68,7 @@ void recombine(Solution** parents, Solution** children){
             lower = parents[0]->genotype[i];
             upper = parents[1]->genotype[i];
         }
-        children[0]->genotype[i] = randdouble(lower,upper);
-        children[1]->genotype[i] = randdouble(lower,upper);
+        children[0]->genotype[i] = randdouble(lower,upper, all_seeds);
+        children[1]->genotype[i] = randdouble(lower,upper, all_seeds);
     }
 }
