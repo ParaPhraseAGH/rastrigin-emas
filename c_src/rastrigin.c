@@ -11,7 +11,7 @@ double randdouble(double lower, double upper, SeedLocks* all_seeds){
 void print_solution(Solution* sol, const char* desc){
     int i;
     printf("%s:",desc);
-    for(i=0; i<sol->len; i++){
+    for(i=0; i < sol->len; i++){
         printf("%.10f ", sol->genotype[i]);
     }
     printf("\n");

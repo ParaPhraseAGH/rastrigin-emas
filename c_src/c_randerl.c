@@ -15,7 +15,7 @@ double uniform_s(Seed* seed);
 uint threads_count();
 
 Seed* new_seed(uint a, uint b, uint c);
-SeedLock* new_seed_lock();
+SeedLock* new_seed_lock(Seed* seed, char* name);
 SeedLocks* new_seed_locks();
 
 Seed global_seed = {
@@ -36,8 +36,20 @@ uniform (SeedLocks* all_seeds) {
 
 SeedLock*
 erl_get_seed(SeedLocks* all_seeds) {
-  SeedLock* seed_lock = all_seeds->locks[0];
-  enif_rwlock_rwlock(seed_lock->lock);
+  int i;
+  SeedLock* seed_lock;
+  for (i = 0; ;  ++i) {
+    seed_lock = all_seeds->locks[i];
+    if(enif_rwlock_tryrwlock(seed_lock->lock) == 0) {
+      break;
+    }
+
+    if (i == all_seeds->count -1) {
+      printf("reseting nif count\n");
+      i = -1;
+    }
+  }
+
   return seed_lock;
 }
 
@@ -64,7 +76,6 @@ uniform_s (Seed *seed) {
 
 SeedLocks*
 create_seeds() {
-
   return new_seed_locks();
 }
 
@@ -80,11 +91,11 @@ new_seed(uint a, uint b, uint c) {
 
 
 SeedLock*
-new_seed_lock(Seed* seed) {
+new_seed_lock(Seed* seed, char* name) {
   SeedLock* seed_lock = (SeedLock*) enif_alloc(sizeof (SeedLock));
 
   seed_lock->seed = seed;
-  seed_lock->lock = enif_rwlock_create("nif_random_seed_lock");
+  seed_lock->lock = enif_rwlock_create(name);
 
   return seed_lock;
 }
@@ -93,12 +104,19 @@ SeedLocks*
 new_seed_locks() {
   SeedLocks* all_locks = (SeedLocks*) enif_alloc(sizeof(SeedLocks));
   uint lock_count = threads_count();
-  SeedLock** lock_array = (SeedLock**) enif_alloc(sizeof(SeedLock) * lock_count);
+  SeedLock** lock_array = (SeedLock**) enif_alloc(sizeof(SeedLock*) * lock_count);
+  char name[30];
+  uint i;
+
 
   all_locks->count = lock_count;
   all_locks->locks = lock_array;
 
-  all_locks->locks[0] = new_seed_lock(&global_seed);
+  for (i = 0; i < lock_count; i++) {
+    sprintf(name, "nif_random_seed_lock_%03d", i+1);
+    all_locks->locks[i] = new_seed_lock(&global_seed, name);
+  }
+
 
   return all_locks;
 }
@@ -111,5 +129,5 @@ threads_count() {
   int dirty_threads = sys_info.dirty_scheduler_support ? scheduler_threads : 0;
   int driver_threads = sys_info.async_threads;
   printf("Schedulers from C: %d + %d + %d  \n", scheduler_threads, dirty_threads, driver_threads);
-  return scheduler_threads + dirty_threads * driver_threads;
+  return scheduler_threads + dirty_threads + driver_threads;
 }
