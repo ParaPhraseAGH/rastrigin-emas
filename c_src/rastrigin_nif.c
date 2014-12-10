@@ -3,7 +3,7 @@
 #include "stdlib.h"
 #include "time.h"
 #include "rastrigin.h"
-
+#include "c_randerl.h"
 
 // #define SEED 0
 // #define DEBUG
@@ -36,14 +36,7 @@ static int nif_load(ErlNifEnv* env, void** priv, ERL_NIF_TERM load_info){
 
     *priv = enif_open_resource_type(env, mod, name, solution_dtor, flags, NULL);
 
-    // SOL_TYPE = *priv;
-
-    #ifdef SEED
-    srand(SEED);
-    #else 
-    srand(get_seed());
-    // srand(time(NULL));
-    #endif
+    create_seeds();
 
     return 0;
 }
