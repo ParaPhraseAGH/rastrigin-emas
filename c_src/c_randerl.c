@@ -18,13 +18,6 @@ Seed* new_seed(uint a, uint b, uint c);
 SeedLock* new_seed_lock(Seed* seed, char* name);
 SeedLocks* new_seed_locks();
 
-Seed global_seed = {
-  3172,
-  9814,
-  20125,
-};
-
-
 double
 uniform (SeedLocks* all_seeds) {
   SeedLock* lock = erl_get_seed(all_seeds);
@@ -114,7 +107,8 @@ new_seed_locks() {
 
   for (i = 0; i < lock_count; i++) {
     sprintf(name, "nif_random_seed_lock_%03d", i+1);
-    all_locks->locks[i] = new_seed_lock(&global_seed, name);
+    Seed* seed = new_seed(rand(), rand(), rand());
+    all_locks->locks[i] = new_seed_lock(seed, name);
   }
 
 
