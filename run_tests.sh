@@ -19,7 +19,7 @@ run () {
                             --skel_workers $workers \
                             --genetic_ops $ops \
                             --problem_size 100 \
-                            > $output_file || exit 1
+                            # > $output_file || exit 1
 
             done
         done
@@ -33,7 +33,7 @@ rtime=10000
 run_repeat=1
 skel_workers=4
 models="mas_sequential mas_skel mas_hybrid mas_concurrent"
-operators="rastrigin_bin_ops rastrigin_nif_ops"
+operators="old_rastrigin_nif_ops rastrigin_bin_ops rastrigin_nif_ops"
 
 output_root=$output_dir/tests
 

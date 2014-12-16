@@ -1,4 +1,4 @@
--module (rastrigin_nif_ops).
+-module (old_rastrigin_nif_ops).
 
 -behaviour (emas_genetic_ops).
 
@@ -10,7 +10,7 @@
          recombination/3]).
 
 -on_load(init/0).
--define (LIBNAME, "rastrigin_nif").
+-define (LIBNAME, "old_rastrigin_nif").
 
 -type sim_params() :: emas:sim_params().
 -type solution() :: emas:solution(binary()).
