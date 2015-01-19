@@ -34,7 +34,7 @@ double fitness_rastrigin(Solution * sol){
 
 double mutate_feature(double feature, double mutation_range, SeedLocks* all_seeds){
     double range;
-    range = randdouble(0.0, mutation_range, all_seeds);
+    range = randdouble(0.0, 1.0, all_seeds);
     if (range < 0.2){
         range = 5.0;
     } else if (range < 0.4){
@@ -42,7 +42,7 @@ double mutate_feature(double feature, double mutation_range, SeedLocks* all_seed
     } else {
         range = 1.0;
     }
-    return feature + range * tan(M_PI * randdouble(-0.5, 0.5, all_seeds));
+    return feature + range * mutation_range * tan(M_PI * randdouble(-0.5, 0.5, all_seeds));
 }
 
 void mutate(Solution* prev, Solution* out, double range, double rate, SeedLocks* all_seeds){
