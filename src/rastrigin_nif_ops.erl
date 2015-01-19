@@ -39,8 +39,8 @@ nif_evaluation(_Solution) ->
 %% @doc FReproduction function for a pair of agents (crossover and mutation).
 -spec recombination(solution(), solution(), sim_params()) ->
                            {solution(), solution()}.
-recombination(_Solution1, _Solution2, _SP) ->
-    nif_recombination(_Solution1, _Solution2).
+recombination(Solution1, Solution2, _SP) ->
+    nif_recombination(Solution1, Solution2).
 
 nif_recombination(_Solution1, _Solution2) ->
     erlang:nif_error(nif_not_loaded).
